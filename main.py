@@ -9,21 +9,23 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 from sklearn.preprocessing import StandardScaler
 import streamlit as st
 
-# Load and preview the dataset
+# Load the AI4I 2020 dataset
 df = pd.read_csv('sensor_data.csv')
+
+# Preview the data
 st.write("Dataset Preview:")
 st.write(df.head())
 
 # Data Preprocessing
-df.fillna(method='ffill', inplace=True)
-df['temp_roll_mean'] = df['temperature'].rolling(window=5).mean()
-df['vibration_roll_std'] = df['vibration'].rolling(window=5).std()
-df.dropna(inplace=True)
-df['failure'] = (df['maintenance_event'] == 'failure').astype(int)
+# Dropping 'UDI' and 'Product ID' columns as they are not useful for prediction
+df.drop(['UDI', 'Product ID'], axis=1, inplace=True)
 
-# Define features and target
-X = df.drop(['maintenance_event', 'failure'], axis=1)
-y = df['failure']
+# Encoding 'Type' column (categorical) to numerical values
+df['Type'] = df['Type'].astype('category').cat.codes
+
+# Define features and target (assuming 'Machine failure' is the target)
+X = df.drop('Machine failure', axis=1)
+y = df['Machine failure']
 
 # Split the data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -64,12 +66,21 @@ st.pyplot()
 
 # Streamlit App for Real-Time Prediction
 st.sidebar.header('Input Sensor Data')
-temperature = st.sidebar.number_input('Temperature', min_value=0.0, max_value=100.0, value=50.0)
-vibration = st.sidebar.number_input('Vibration', min_value=0.0, max_value=100.0, value=50.0)
+
+# Inputs for the sidebar based on the AI4I dataset features
+air_temp = st.sidebar.number_input('Air Temperature [K]', min_value=290.0, max_value=320.0, value=300.0)
+process_temp = st.sidebar.number_input('Process Temperature [K]', min_value=305.0, max_value=320.0, value=310.0)
+rotational_speed = st.sidebar.number_input('Rotational Speed [rpm]', min_value=1000, max_value=3000, value=1500)
+torque = st.sidebar.number_input('Torque [Nm]', min_value=0.0, max_value=100.0, value=50.0)
+tool_wear = st.sidebar.number_input('Tool Wear [min]', min_value=0, max_value=300, value=150)
+machine_type = st.sidebar.selectbox('Machine Type', ['L', 'M', 'H'])
+
+# Encode the 'Machine Type' input similarly to the preprocessing step
+type_encoded = {'L': 0, 'M': 1, 'H': 2}[machine_type]
 
 # Predict failure probability based on input
-input_data = np.array([[temperature, vibration]])
+input_data = np.array([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]])
 input_data_scaled = scaler.transform(input_data)
 failure_prob = rf_model.predict_proba(input_data_scaled)[:, 1]
 
-st.write(f"Predicted Probability of Failure: {failure_prob[0]:.2f}")
+st.write(f"Predicted Probability of Machine Failure: {failure_prob[0]:.2f}")
