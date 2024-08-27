@@ -51,18 +51,19 @@ st.write(f"AUC-ROC Score: {roc_auc_score(y_test, y_prob):.2f}")
 # Display confusion matrix
 st.write("Confusion Matrix:")
 cm = confusion_matrix(y_test, y_pred)
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-st.pyplot()
+fig_cm, ax_cm = plt.subplots()
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax_cm)
+st.pyplot(fig_cm)
 
 # Display ROC Curve
 fpr, tpr, _ = roc_curve(y_test, y_prob)
-plt.figure()
-plt.plot(fpr, tpr, marker='.', label='Random Forest')
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.legend()
+fig_roc, ax_roc = plt.subplots()
+ax_roc.plot(fpr, tpr, marker='.', label='Random Forest')
+ax_roc.set_xlabel('False Positive Rate')
+ax_roc.set_ylabel('True Positive Rate')
+ax_roc.legend()
 st.write("ROC Curve:")
-st.pyplot()
+st.pyplot(fig_roc)
 
 # Streamlit App for Real-Time Prediction
 st.sidebar.header('Input Sensor Data')
