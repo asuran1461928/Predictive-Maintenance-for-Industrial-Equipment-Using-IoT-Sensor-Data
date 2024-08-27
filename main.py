@@ -82,6 +82,12 @@ type_encoded = {'L': 0, 'M': 1, 'H': 2}[machine_type]
 input_data = pd.DataFrame([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]], 
                           columns=X.columns)
 
+# Check column consistency
+st.write("Input Data Columns:")
+st.write(input_data.columns)
+st.write("Training Data Columns:")
+st.write(X.columns)
+
 # Predict failure probability based on input
 input_data_scaled = scaler.transform(input_data)
 failure_prob = rf_model.predict_proba(input_data_scaled)[:, 1]
