@@ -80,13 +80,7 @@ type_encoded = {'L': 0, 'M': 1, 'H': 2}[machine_type]
 
 # Create a DataFrame for the input data to ensure feature consistency
 input_data = pd.DataFrame([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]], 
-                          columns=X.columns)
-
-# Debugging: Print column names and their counts
-st.write("Expected Columns:")
-st.write(X.columns)
-st.write("Input Data Columns:")
-st.write(input_data.columns)
+                          columns=['Type', 'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]'])
 
 # Check if columns match
 if list(X.columns) != list(input_data.columns):
