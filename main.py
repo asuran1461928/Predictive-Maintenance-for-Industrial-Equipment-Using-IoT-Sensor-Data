@@ -26,6 +26,10 @@ df['Type'] = df['Type'].astype('category').cat.codes
 X = df.drop('Machine failure', axis=1)
 y = df['Machine failure']
 
+# Print the columns used for training
+st.write("Columns used for training:")
+st.write(X.columns)
+
 # Split the data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -81,6 +85,10 @@ type_encoded = {'L': 0, 'M': 1, 'H': 2}[machine_type]
 # Create a DataFrame for the input data to ensure feature consistency
 input_data = pd.DataFrame([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]], 
                           columns=['Type', 'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]'])
+
+# Print the columns of the input data
+st.write("Input Data Columns:")
+st.write(input_data.columns)
 
 # Check if columns match
 if list(X.columns) != list(input_data.columns):
