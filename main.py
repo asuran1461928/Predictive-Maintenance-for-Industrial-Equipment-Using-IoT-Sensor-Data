@@ -78,8 +78,11 @@ machine_type = st.sidebar.selectbox('Machine Type', ['L', 'M', 'H'])
 # Encode the 'Machine Type' input similarly to the preprocessing step
 type_encoded = {'L': 0, 'M': 1, 'H': 2}[machine_type]
 
+# Create a DataFrame for the input data to ensure feature consistency
+input_data = pd.DataFrame([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]], 
+                          columns=X.columns)
+
 # Predict failure probability based on input
-input_data = np.array([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]])
 input_data_scaled = scaler.transform(input_data)
 failure_prob = rf_model.predict_proba(input_data_scaled)[:, 1]
 
