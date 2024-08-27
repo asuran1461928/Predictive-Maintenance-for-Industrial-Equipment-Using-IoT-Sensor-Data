@@ -16,7 +16,7 @@ st.write("Dataset Preview:")
 st.write(df.head())
 
 # Data Preprocessing
-# Dropping 'UDI' and 'Product ID' columns as they are not useful for prediction
+# Drop 'UDI' and 'Product ID' columns as they are not useful for prediction
 df.drop(['UDI', 'Product ID'], axis=1, inplace=True)
 
 # Encoding 'Type' column (categorical) to numerical values
