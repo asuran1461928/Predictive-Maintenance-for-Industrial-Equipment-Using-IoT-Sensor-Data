@@ -91,13 +91,17 @@ if st.sidebar.button('Predict Machine Failure'):
 # Data Visualization
 st.subheader("Data Visualization")
 st.write("Distribution of Features")
-
-# Distribution plots for features
 fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(15, 10))
 sns.histplot(df['Air temperature [K]'], kde=True, ax=axes[0, 0])
 sns.histplot(df['Process temperature [K]'], kde=True, ax=axes[0, 1])
 sns.histplot(df['Rotational speed [rpm]'], kde=True, ax=axes[1, 0])
 sns.histplot(df['Torque [Nm]'], kde=True, ax=axes[1, 1])
 sns.histplot(df['Tool wear [min]'], kde=True, ax=axes[2, 0])
-sns.countplot(x=df['Type'], ax=axes[2, 1])
+sns.countplot(df['Type'], ax=axes[2, 1])
 st.pyplot(fig)
+
+# Correlation Heatmap
+st.write("Correlation Heatmap")
+fig_corr, ax_corr = plt.subplots(figsize=(10, 8))
+sns.heatmap(df.corr(), annot=True, fmt=".2f", cmap="coolwarm", ax=ax_corr)
+st.pyplot(fig_corr)
