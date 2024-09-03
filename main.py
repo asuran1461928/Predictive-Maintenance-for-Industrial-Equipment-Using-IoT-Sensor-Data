@@ -86,6 +86,11 @@ type_encoded = {'L': 0, 'M': 1, 'H': 2}[machine_type]
 input_data = pd.DataFrame([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]], 
                           columns=['Type', 'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]'])
 
+# Add the missing columns with default values (e.g., 0)
+missing_columns = ['TWF', 'HDF', 'PWF', 'OSF', 'RNF']
+for col in missing_columns:
+    input_data[col] = 0
+
 # Print the columns of the input data and X for debugging
 st.write("Input Data Columns:")
 st.write(input_data.columns)
