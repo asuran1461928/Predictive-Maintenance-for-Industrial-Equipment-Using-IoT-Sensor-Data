@@ -14,6 +14,21 @@ df = pd.read_csv('sensor_data.csv')
 # Set Streamlit page configuration
 st.set_page_config(page_title="Predictive Maintenance Dashboard", layout="wide")
 
+# Custom CSS for styling
+st.markdown("""
+    <style>
+    .sidebar .sidebar-content {
+        background-color: #f0f2f6;
+    }
+    .main .block-container {
+        padding-top: 20px;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        color: #343a40;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Sidebar - User input features
 st.sidebar.header('Input Sensor Data')
 air_temp = st.sidebar.number_input('Air Temperature [K]', min_value=290.0, max_value=320.0, value=300.0)
@@ -69,6 +84,7 @@ st.write(f"AUC-ROC Score: {roc_auc_score(y_test, y_prob):.2f}")
 cm = confusion_matrix(y_test, y_pred)
 fig_cm, ax_cm = plt.subplots()
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax_cm)
+ax_cm.set_title('Confusion Matrix')
 st.write("Confusion Matrix:")
 st.pyplot(fig_cm)
 
@@ -77,6 +93,7 @@ fig_roc, ax_roc = plt.subplots()
 ax_roc.plot(fpr, tpr, marker='.', label='Random Forest')
 ax_roc.set_xlabel('False Positive Rate')
 ax_roc.set_ylabel('True Positive Rate')
+ax_roc.set_title('ROC Curve')
 ax_roc.legend()
 st.write("ROC Curve:")
 st.pyplot(fig_roc)
@@ -93,15 +110,23 @@ st.subheader("Data Visualization")
 st.write("Distribution of Features")
 fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(15, 10))
 sns.histplot(df['Air temperature [K]'], kde=True, ax=axes[0, 0])
+axes[0, 0].set_title('Air Temperature Distribution')
 sns.histplot(df['Process temperature [K]'], kde=True, ax=axes[0, 1])
+axes[0, 1].set_title('Process Temperature Distribution')
 sns.histplot(df['Rotational speed [rpm]'], kde=True, ax=axes[1, 0])
+axes[1, 0].set_title('Rotational Speed Distribution')
 sns.histplot(df['Torque [Nm]'], kde=True, ax=axes[1, 1])
+axes[1, 1].set_title('Torque Distribution')
 sns.histplot(df['Tool wear [min]'], kde=True, ax=axes[2, 0])
-sns.countplot(df['Type'], ax=axes[2, 1])
+axes[2, 0].set_title('Tool Wear Distribution')
+sns.countplot(x=df['Type'], ax=axes[2, 1])
+axes[2, 1].set_title('Machine Type Count')
+plt.tight_layout()
 st.pyplot(fig)
 
 # Correlation Heatmap
 st.write("Correlation Heatmap")
 fig_corr, ax_corr = plt.subplots(figsize=(10, 8))
 sns.heatmap(df.corr(), annot=True, fmt=".2f", cmap="coolwarm", ax=ax_corr)
+ax_corr.set_title('Feature Correlation Heatmap')
 st.pyplot(fig_corr)
