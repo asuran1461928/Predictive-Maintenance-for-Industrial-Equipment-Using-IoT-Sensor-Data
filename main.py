@@ -86,15 +86,10 @@ type_encoded = {'L': 0, 'M': 1, 'H': 2}[machine_type]
 input_data = pd.DataFrame([[type_encoded, air_temp, process_temp, rotational_speed, torque, tool_wear]], 
                           columns=['Type', 'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]'])
 
-# Print the columns of the input data
-st.write("Input Data Columns:")
-st.write(input_data.columns)
+# Ensure the input data columns match the training data columns
+input_data = input_data[X.columns]
 
-# Check if columns match
-if list(X.columns) != list(input_data.columns):
-    st.error("Column mismatch detected! Please check the feature columns.")
-else:
-    # Predict failure probability based on input
-    input_data_scaled = scaler.transform(input_data)
-    failure_prob = rf_model.predict_proba(input_data_scaled)[:, 1]
-    st.write(f"Predicted Probability of Machine Failure: {failure_prob[0]:.2f}")
+# Predict failure probability based on input
+input_data_scaled = scaler.transform(input_data)
+failure_prob = rf_model.predict_proba(input_data_scaled)[:, 1]
+st.write(f"Predicted Probability of Machine Failure: {failure_prob[0]:.2f}")
