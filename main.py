@@ -7,6 +7,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
 from sklearn.preprocessing import StandardScaler
 import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
 
 # Load the AI4I 2020 dataset
 df = pd.read_csv('sensor_data.csv')
@@ -107,6 +109,8 @@ if st.sidebar.button('Predict Machine Failure'):
 
 # Data Visualization
 st.subheader("Data Visualization")
+
+# Distribution of Features
 st.write("Distribution of Features")
 fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(15, 10))
 sns.histplot(df['Air temperature [K]'], kde=True, ax=axes[0, 0])
@@ -124,9 +128,55 @@ axes[2, 1].set_title('Machine Type Count')
 plt.tight_layout()
 st.pyplot(fig)
 
+# Advanced Data Visualization
+st.write("Advanced Data Visualization")
+
+# Pairplot
+st.write("Pairplot of Features")
+fig_pairplot = sns.pairplot(df, hue="Machine failure")
+st.pyplot(fig_pairplot)
+
+# Boxplots for Outlier Detection
+st.write("Boxplots for Outlier Detection")
+fig_box, axes_box = plt.subplots(nrows=3, ncols=2, figsize=(15, 10))
+sns.boxplot(x=df['Machine failure'], y=df['Air temperature [K]'], ax=axes_box[0, 0])
+axes_box[0, 0].set_title('Air Temperature vs Machine Failure')
+sns.boxplot(x=df['Machine failure'], y=df['Process temperature [K]'], ax=axes_box[0, 1])
+axes_box[0, 1].set_title('Process Temperature vs Machine Failure')
+sns.boxplot(x=df['Machine failure'], y=df['Rotational speed [rpm]'], ax=axes_box[1, 0])
+axes_box[1, 0].set_title('Rotational Speed vs Machine Failure')
+sns.boxplot(x=df['Machine failure'], y=df['Torque [Nm]'], ax=axes_box[1, 1])
+axes_box[1, 1].set_title('Torque vs Machine Failure')
+sns.boxplot(x=df['Machine failure'], y=df['Tool wear [min]'], ax=axes_box[2, 0])
+axes_box[2, 0].set_title('Tool Wear vs Machine Failure')
+sns.boxplot(x=df['Machine failure'], y=df['Type'], ax=axes_box[2, 1])
+axes_box[2, 1].set_title('Machine Type vs Machine Failure')
+plt.tight_layout()
+st.pyplot(fig_box)
+
 # Correlation Heatmap
 st.write("Correlation Heatmap")
 fig_corr, ax_corr = plt.subplots(figsize=(10, 8))
 sns.heatmap(df.corr(), annot=True, fmt=".2f", cmap="coolwarm", ax=ax_corr)
 ax_corr.set_title('Feature Correlation Heatmap')
 st.pyplot(fig_corr)
+
+# Interactive Plotly Visualizations
+st.write("Interactive Visualizations with Plotly")
+
+# Scatter Matrix
+st.write("Scatter Matrix")
+fig_scatter = px.scatter_matrix(df, dimensions=['Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]'], color='Machine failure')
+st.plotly_chart(fig_scatter)
+
+# 3D Scatter Plot
+st.write("3D Scatter Plot")
+fig_3d = px.scatter_3d(df, x='Air temperature [K]', y='Process temperature [K]', z='Rotational speed [rpm]', color='Machine failure', size='Torque [Nm]', symbol='Type')
+st.plotly_chart(fig_3d)
+
+# Feature Importance
+st.write("Feature Importance")
+feature_importance = pd.Series(rf_model.feature_importances_, index=X.columns)
+fig_feature_importance = px.bar(feature_importance.sort_values(), orientation='h', title='Feature Importance')
+st.plotly_chart(fig_feature_importance)
+
